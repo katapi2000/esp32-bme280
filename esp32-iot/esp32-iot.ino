@@ -6,17 +6,18 @@ Copyright (c) 2017 Mgo-tec
 #include <WiFi.h>
 #include <Ambient.h>
 #include "ESP32_BME280_SPI.h"
+#include "config.h"
 
 WiFiClient client;
 Ambient ambient;
 
 //wifiのパスワードとか
-const char* ssid = "";
-const char* password = "";
+const char* ssid = WIFI_SSID;
+const char* password = WIFI_PASSWD;
 
 //ambient
-unsigned int channelId = ;
-const char* writeKey = "";
+unsigned int channelId = CHANNELID;
+const char* writeKey = WRITE_KEY;
 
 //GPIOピンアサイン
 const uint8_t SCLK_bme280 = 14;
@@ -66,7 +67,7 @@ void loop(){
 void wifi() {
   WiFi.begin(ssid, password); //wifi apに接続
   while(WiFi.status() != WL_CONNECTED) {  //wifi ap待機
-    delay(100);
+    delay(1000);
     Serial.println("wait...");  
   }
 
