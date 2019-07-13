@@ -5,6 +5,16 @@
 ESP32と温湿度・気圧センサモジュールのBME280で、部屋の状態を測定。  
 IoTデータ可視化サービス "Ambient" でデータをグラフにします。
 
+## 接続方法
+|ESP32 |BME280 |
+| :---: |:----: |
+|3V3   |VCC|
+|GND |GND|
+|GPIO #26 |CSB|
+|GPIO #13 |SDI|
+|GPIO #12 |SDO|
+|GPIO #14 |SCK|
+
 ## 使い方
 ``` shell
 $ git clone git@github.com:katapi2000/esp32-bme280
