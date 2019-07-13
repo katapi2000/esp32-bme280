@@ -15,22 +15,16 @@ const char* ntpServer = "ntp.jst.mfeed.ad.jp";    //日本のNTPサーバー
 const long  gmtOffset_sec = 9 * 3600;   //時差9h
 const int   daylightOffset_sec = 0;   //サマータイムなし
 
-
-
 #define BME_CSB 26
 #define BME_SDI 13
 #define BME_SDO 12
 #define BME_SCK 14
 
-//Adafruit_BME280 bme; //I2C
-
 //SPI通信を使う(高速だし)
-//Adafruit_BME280 bme(BME_CSB); // hardware SPI
 Adafruit_BME280 bme(BME_CSB, BME_SDI, BME_SDO, BME_SCK); // software SPI
 
 void setup() {
     Serial.begin(9600);
-    Serial.println(F("BME280 test"));
 
     bool status;
     
@@ -42,13 +36,10 @@ void setup() {
         while (1);
     }
 
+    wifi();
+
     //init and get the time
     configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
-    
-    Serial.println("-- Default Test --");
-    delay(1000);
-
-    Serial.println();
 }
 
 void loop() { 
@@ -93,13 +84,14 @@ void printLocalTime()
 
 void wifi() {
   Serial.printf("Connecting to %s", ssid);
+  Serial.println();
   WiFi.begin(ssid, password); //wifi apに接続
   while(WiFi.status() != WL_CONNECTED) {  //wifi ap待機
     delay(1000);
     Serial.println("wait...");
   }
 
-  Serial.print("WiFI connected\r\nIP adress: ");
+  Serial.print("WiFI connected\r IP adress: ");
   Serial.println(WiFi.localIP());
 }
 
