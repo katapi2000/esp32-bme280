@@ -3,6 +3,9 @@
 #include <SPI.h>
 #include <WiFi.h>
 #include <Ambient.h>
+#include <ESPmDNS.h>
+#include <WiFiUdp.h>
+#include <ArduinoOTA.h>
 #include "time.h"
 #include "config.h"
 
@@ -32,7 +35,7 @@ const int   daylightOffset_sec = 0;   //サマータイムなし
 Adafruit_BME280 bme(BME_CSB, BME_SDI, BME_SDO, BME_SCK); // software SPI
 
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(115200);
 
     bool status;
     
@@ -43,6 +46,38 @@ void setup() {
         Serial.println("Could not find a valid BME280 sensor, check wiring!");
         while (1);
     }
+
+    //####################
+    //ArduinoOTAは削除しない
+    //####################
+    ArduinoOTA
+    .onStart([]() {
+      String type;
+      if (ArduinoOTA.getCommand() == U_FLASH)
+        type = "sketch";
+      else // U_SPIFFS
+        type = "filesystem";
+
+      // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
+      Serial.println("Start updating " + type);
+    })
+    .onEnd([]() {
+      Serial.println("\nEnd");
+    })
+    .onProgress([](unsigned int progress, unsigned int total) {
+      Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+    })
+    .onError([](ota_error_t error) {
+      Serial.printf("Error[%u]: ", error);
+      if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
+      else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
+      else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
+      else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
+      else if (error == OTA_END_ERROR) Serial.println("End Failed");
+    });
+
+    ArduinoOTA.begin();
+    //####################
 
     //wifi確認用LED
     pinMode(2, OUTPUT);
@@ -59,6 +94,11 @@ void setup() {
 }
 
 void loop() { 
+    //####################
+    //削除しない
+    ArduinoOTA.handle();
+    //####################
+    
     //wifi接続したら点灯
     digitalWrite(2, HIGH);
     
@@ -104,6 +144,7 @@ void printLocalTime()
 void wifi() {
   Serial.printf("Connecting to %s", ssid);
   Serial.println();
+  WiFi.mode(WIFI_STA);  //wifi子機として動作
   WiFi.begin(ssid, password); //wifi apに接続
   while(WiFi.status() != WL_CONNECTED) {  //wifi ap待機
     delay(1000);
