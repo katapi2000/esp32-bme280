@@ -36,6 +36,7 @@ Adafruit_BME280 bme(BME_CSB, BME_SDI, BME_SDO, BME_SCK); // software SPI
 
 void setup() {
     Serial.begin(115200);
+    WiFi.mode(WIFI_STA);
 
     bool status;
     
