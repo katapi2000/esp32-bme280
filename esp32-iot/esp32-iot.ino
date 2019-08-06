@@ -34,6 +34,13 @@ const int   daylightOffset_sec = 0;   //サマータイムなし
 //SPI通信を使う(高速だし)
 Adafruit_BME280 bme(BME_CSB, BME_SDI, BME_SDO, BME_SCK); // software SPI
 
+//スリープ時間の定義
+#define uS_TO_S_FACTOR 1000000  //マイクロ秒から秒に変換
+#define TIME_TO_SLEEP  15 //スリープ時間(秒)
+
+//RTCメモリにスリープ回数を保存
+RTC_DATA_ATTR int bootcount = 0;
+
 void setup() {
     Serial.begin(115200);
     WiFi.mode(WIFI_STA);
