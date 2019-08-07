@@ -36,7 +36,7 @@ Adafruit_BME280 bme(BME_CSB, BME_SDI, BME_SDO, BME_SCK); // software SPI
 
 //スリープ時間の定義
 #define uS_TO_S_FACTOR 1000000  //マイクロ秒から秒に変換
-#define TIME_TO_SLEEP  15 //スリープ時間(秒)
+#define TIME_TO_SLEEP  5 //スリープ時間(秒)
 
 //RTCメモリにスリープ回数を保存
 RTC_DATA_ATTR int bootCount = 0;
@@ -45,7 +45,7 @@ void setup() {
     Serial.begin(115200);
     WiFi.mode(WIFI_STA);
     ++bootCount;  //ブート回数を増やす
-    Serial.println("Boot number: " + String(bootCount));
+    Serial.println("Boot number: " + String(bootCount));  //ブート回数の表示
 
     bool status;
     
@@ -138,8 +138,12 @@ void main_func() {
     printLocalTime();
     printValues();
     ambientSend();
-    delay(500000);
-    Serial.println();
+
+    Serial.print("sleep");
+    //ウェイクアップソースの定義
+    esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
+    //スリープ
+    esp_deep_sleep_start();
 }
 
 
