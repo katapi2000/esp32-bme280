@@ -28,9 +28,18 @@ const char* key = SCRIPT_ID;
 //SPI通信を使う(高速だし)
 Adafruit_BME280 bme(BME_CSB, BME_SDI, BME_SDO, BME_SCK); // software SPI
 
+//スリープ時間の定義
+#define uS_TO_S_FACTOR 1000000  //マイクロ秒から秒に変換
+#define TIME_TO_SLEEP  5 //スリープ時間(秒)
+
+//RTCメモリにスリープ回数を保存
+RTC_DATA_ATTR int bootCount = 0;
+
 void setup() {
   Serial.begin(115200);
   Serial.println("Booting");
+  ++bootCount;  //ブート回数を増やす
+  Serial.println("Boot number: " + String(bootCount));  //ブート回数の表示
   wifi();
 
   //BME280が接続されていないとき
@@ -72,9 +81,21 @@ void setup() {
 
   ArduinoOTA.begin();
   //####################
+
+  //### main ###
+  main_func();
+
+  //ウェイクアップソースの定義
+  esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
+
+  //スリープ実行
+  Serial.println("sleep now");
+  delay(1000);
+  Serial.flush();
+  esp_deep_sleep_start();
 }
 
-void loop() {
+void main_func() {
   //####################
   //削除しない
   ArduinoOTA.handle();
@@ -88,7 +109,6 @@ void loop() {
   }
   printValues();
   send_to_google();
-  delay(10000); //10秒毎に書き込みする
 }
 
 void wifi() {
