@@ -30,7 +30,7 @@ Adafruit_BME280 bme(BME_CSB, BME_SDI, BME_SDO, BME_SCK); // software SPI
 
 //スリープ時間の定義
 #define uS_TO_S_FACTOR 1000000  //マイクロ秒から秒に変換
-#define TIME_TO_SLEEP  5 //スリープ時間(秒)
+#define TIME_TO_SLEEP  300 //スリープ時間(秒)
 
 //RTCメモリにスリープ回数を保存
 RTC_DATA_ATTR int bootCount = 0;
@@ -95,6 +95,10 @@ void setup() {
   esp_deep_sleep_start();
 }
 
+void loop() {
+  
+}
+
 void main_func() {
   //####################
   //削除しない
@@ -124,7 +128,7 @@ void wifi() {
   }
   Serial.print("Connected to ");
   Serial.println(ssid);
-  Serial.println("IP address: ");
+  Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
   server.begin();
 }
