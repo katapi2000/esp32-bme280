@@ -118,18 +118,12 @@ void main_func() {
 void wifi() {
   WiFiServer server(80);
   // Wi-Fiに接続
-  int i = 0;
   Serial.printf("Connecting to %s", ssid);
   WiFi.mode(WIFI_STA);  //wifi子機
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     Serial.print(".");
-    // 接続するまで待機する
-    i++;
     delay(1000);
-    if(i > 10) {
-      ESP.restart();
-    }
   }
   Serial.print("Connected to ");
   Serial.println(ssid);
